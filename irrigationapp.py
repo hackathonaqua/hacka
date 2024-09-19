@@ -4,7 +4,7 @@ import requests
 import numpy as np
 import plotly.graph_objs as go
 
-pip install plotly.graph_objs
+pip install plotly
 
 # Sample data for demonstration purposes
 soil_data = {
