@@ -4,6 +4,8 @@ import requests
 import numpy as np
 import plotly.graph_objs as go
 
+pip install plotly.graph_objs
+
 # Sample data for demonstration purposes
 soil_data = {
     "Soil Temperature (°C)": [20, 21, 22, 23, 24, 22, 21],
