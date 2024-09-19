@@ -2,9 +2,6 @@ import streamlit as st
 import pandas as pd
 import requests
 import numpy as np
-import plotly.graph_objs as go
-
-pip install plotly
 
 # Sample data for demonstration purposes
 soil_data = {
@@ -40,12 +37,9 @@ st.write("Monitor soil data collected from the sensor network.")
 soil_df = pd.DataFrame(soil_data)
 st.dataframe(soil_df)
 
-# Visualize soil temperature and humidity
-fig_temp = go.Figure()
-fig_temp.add_trace(go.Scatter(x=soil_df.index, y=soil_df["Soil Temperature (°C)"], mode='lines+markers', name='Soil Temperature (°C)', line=dict(color='blue')))
-fig_temp.add_trace(go.Scatter(x=soil_df.index, y=soil_df["Soil Humidity (%)"], mode='lines+markers', name='Soil Humidity (%)', line=dict(color='green')))
-fig_temp.update_layout(title='Soil Temperature and Humidity Over Time', xaxis_title='Time (Days)', yaxis_title='Value', legend=dict(x=0, y=1))
-st.plotly_chart(fig_temp)
+# Visualize soil temperature and humidity using Streamlit's line chart
+st.subheader("Soil Temperature and Humidity Over Time")
+st.line_chart(soil_df[["Soil Temperature (°C)", "Soil Humidity (%)"]])
 
 # Gathering Soil
 st.header("Gathering Soil Data")
