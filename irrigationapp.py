@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import requests
+import numpy as np
 
 # Sample data for demonstration purposes
 soil_data = {
@@ -12,34 +13,102 @@ soil_data = {
 
 # Function to control sprinklers
 def control_sprinklers(action):
-    # Here, you'd typically send an HTTP request to the sprinkler controller
     url = "http://your_sprinkler_controller_api_endpoint"
     response = requests.post(url, json={"action": action})
     return response.status_code
+
+# Function to fetch weather forecast (placeholder)
+def get_weather_forecast():
+    return {
+        "Temperature (°C)": 28,
+        "Humidity (%)": 60,
+        "Rain Probability (%)": 20
+    }
+
+# Function to suggest crops based on soil conditions
+def suggest_crop(soil_humidity):
+    if soil_humidity < 40:
+        return "Wheat"
+    else:
+        return "Paddy"
 
 # Streamlit UI
 st.title("Smart Irrigation Management System")
 
 st.header("Soil Moisture Profile")
 st.write("Monitor soil data collected from the sensor network.")
-
-# Display the soil data
 soil_df = pd.DataFrame(soil_data)
 st.dataframe(soil_df)
 
-# Planning the plantation cycle
-st.header("Plantation Cycle Planning")
-st.write("Use the data to plan your irrigation needs.")
+# Gathering Soil
+st.header("Gathering Soil Data")
+st.write("Feed the soil data to sensors for analysis.")
+soil_sample = st.text_input("Enter soil sample ID", "")
 
-phase = st.selectbox("Select Growth Phase", ["Field Preparation", "Plantation", "Growth", "Harvest"])
+# Analyzing Soil
+if st.button("Analyze Soil"):
+    st.success("Soil analyzed successfully! Data recorded.")
+
+# Separate the data
+st.header("Soil Data Summary")
+soil_temperature = soil_df["Soil Temperature (°C)"].mean()
+soil_humidity = soil_df["Soil Humidity (%)"].mean()
+ambient_temperature = soil_df["Ambient Temperature (°C)"].mean()
+ambient_humidity = soil_df["Ambient Humidity (%)"].mean()
+
+st.write(f"Average Soil Temperature: {soil_temperature} °C")
+st.write(f"Average Soil Humidity: {soil_humidity} %")
+st.write(f"Average Ambient Temperature: {ambient_temperature} °C")
+st.write(f"Average Ambient Humidity: {ambient_humidity} %")
+
+# Weather Forecast
+st.header("Weather Forecast")
+weather = get_weather_forecast()
+st.write(f"Temperature: {weather['Temperature (°C)']} °C")
+st.write(f"Humidity: {weather['Humidity (%)']} %")
+st.write(f"Rain Probability: {weather['Rain Probability (%)']} %")
+
+# Crop Forecast
+st.header("Crop Forecast")
+current_crop = st.selectbox("Select Current Crop", ["Paddy", "Wheat"])
+suggested_crop = suggest_crop(soil_humidity)
+st.write(f"Suggested Crop for Next Season: {suggested_crop}")
+
+# Planning Phases
+st.header("Planning Phases")
+phase = st.selectbox("Select Phase", ["Field Preparation", "Plantation", "Growth", "Harvest"])
+
+# Field Preparation Phase
 if phase == "Field Preparation":
-    st.write("Consider irrigation based on initial soil moisture levels.")
+    st.subheader("Field Preparation Phase")
+    crop_area = st.number_input("Select Crop Area (hectares)", min_value=1)
+    seeds_quantity = st.number_input("Seeds Quantity (kg)", min_value=1)
+    pesticides = st.text_input("Pesticide Type", "Insecticide")
+    field_preparation_steps = st.text_area("How to Prepare the Field", "Tilling, leveling, etc.")
+    st.write("Sprinkler Usage Suggestion: Water the field before planting.")
+
+# Plantation Phase
 elif phase == "Plantation":
-    st.write("Irrigation may be needed for seed germination.")
+    st.subheader("Plantation Phase")
+    plantation_time = st.date_input("Select Time of Plantation")
+
+# Growth Phase
 elif phase == "Growth":
-    st.write("Monitor moisture levels frequently to maintain optimal conditions.")
+    st.subheader("Growth Phase")
+    pesticides_usage = st.text_input("Pesticide Usage Suggestion", "Apply fungicide if needed.")
+    st.write("Sprinkler Usage Suggestion: Water regularly based on soil moisture.")
+
+# Harvest Phase
 elif phase == "Harvest":
-    st.write("Minimize irrigation to prepare for harvest.")
+    st.subheader("Harvest Phase")
+    harvesting_time = st.date_input("Select Harvesting Time")
+    storage_suggestion = st.text_area("Storage Suggestion", "Store in a cool, dry place.")
+
+# Estimation Section
+st.header("Estimation")
+manpower_estimate = st.number_input("Estimated Manpower Required", min_value=1)
+machinery_estimate = st.number_input("Estimated Machinery Required", min_value=1)
+cost_estimate = st.number_input("Estimated Cost (in currency)", min_value=0)
 
 # Sprinkler control section
 st.header("Smart Sprinkler Control")
@@ -62,4 +131,4 @@ if st.button("Stop Irrigation"):
     st.success("Irrigation stopped.")
 
 # Footer
-st.write("This application helps farmers manage irrigation effectively using real-time data.")
+st.write("This application helps farmers manage irrigation effectively using real-time data and analytics.")
