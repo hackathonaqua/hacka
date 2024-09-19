@@ -2,13 +2,14 @@ import streamlit as st
 import pandas as pd
 import requests
 import numpy as np
+import plotly.graph_objs as go
 
 # Sample data for demonstration purposes
 soil_data = {
-    "Soil Temperature (°C)": [20, 21, 22],
-    "Soil Humidity (%)": [30, 35, 40],
-    "Ambient Temperature (°C)": [25, 26, 27],
-    "Ambient Humidity (%)": [50, 55, 60],
+    "Soil Temperature (°C)": [20, 21, 22, 23, 24, 22, 21],
+    "Soil Humidity (%)": [30, 35, 40, 32, 38, 36, 34],
+    "Ambient Temperature (°C)": [25, 26, 27, 28, 29, 30, 31],
+    "Ambient Humidity (%)": [50, 55, 60, 58, 56, 54, 52],
 }
 
 # Function to control sprinklers
@@ -27,10 +28,7 @@ def get_weather_forecast():
 
 # Function to suggest crops based on soil conditions
 def suggest_crop(soil_humidity):
-    if soil_humidity < 40:
-        return "Wheat"
-    else:
-        return "Paddy"
+    return "Wheat" if soil_humidity < 40 else "Paddy"
 
 # Streamlit UI
 st.title("Smart Irrigation Management System")
@@ -40,9 +38,15 @@ st.write("Monitor soil data collected from the sensor network.")
 soil_df = pd.DataFrame(soil_data)
 st.dataframe(soil_df)
 
+# Visualize soil temperature and humidity
+fig_temp = go.Figure()
+fig_temp.add_trace(go.Scatter(x=soil_df.index, y=soil_df["Soil Temperature (°C)"], mode='lines+markers', name='Soil Temperature (°C)', line=dict(color='blue')))
+fig_temp.add_trace(go.Scatter(x=soil_df.index, y=soil_df["Soil Humidity (%)"], mode='lines+markers', name='Soil Humidity (%)', line=dict(color='green')))
+fig_temp.update_layout(title='Soil Temperature and Humidity Over Time', xaxis_title='Time (Days)', yaxis_title='Value', legend=dict(x=0, y=1))
+st.plotly_chart(fig_temp)
+
 # Gathering Soil
 st.header("Gathering Soil Data")
-st.write("Feed the soil data to sensors for analysis.")
 soil_sample = st.text_input("Enter soil sample ID", "")
 
 # Analyzing Soil
@@ -56,10 +60,10 @@ soil_humidity = soil_df["Soil Humidity (%)"].mean()
 ambient_temperature = soil_df["Ambient Temperature (°C)"].mean()
 ambient_humidity = soil_df["Ambient Humidity (%)"].mean()
 
-st.write(f"Average Soil Temperature: {soil_temperature} °C")
-st.write(f"Average Soil Humidity: {soil_humidity} %")
-st.write(f"Average Ambient Temperature: {ambient_temperature} °C")
-st.write(f"Average Ambient Humidity: {ambient_humidity} %")
+st.write(f"Average Soil Temperature: {soil_temperature:.2f} °C")
+st.write(f"Average Soil Humidity: {soil_humidity:.2f} %")
+st.write(f"Average Ambient Temperature: {ambient_temperature:.2f} °C")
+st.write(f"Average Ambient Humidity: {ambient_humidity:.2f} %")
 
 # Weather Forecast
 st.header("Weather Forecast")
